@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import com.github.ewanld.objectvisitor.ObjectVisitor;
 import com.github.ewanld.objectvisitor.VisitEvent;
 
-public class ToJson5Visitor extends ObjectVisitor {
+public class Json5Dumper extends ObjectVisitor {
 	private final Writer writer;
 	private static final Pattern unquotedKeyPattern = Pattern.compile("[A-Za-z0-9_]+");
 	private static final String[] REPLACEMENT_CHARS;
@@ -26,7 +26,7 @@ public class ToJson5Visitor extends ObjectVisitor {
 		REPLACEMENT_CHARS['\f'] = "\\f";
 	}
 
-	public ToJson5Visitor(Writer writer) throws IOException {
+	public Json5Dumper(Writer writer) throws IOException {
 		this.writer = writer;
 	}
 
@@ -85,7 +85,7 @@ public class ToJson5Visitor extends ObjectVisitor {
 
 	@Override
 	public void visitChar(Character o) throws Exception {
-		writer.write(o.toString());
+		visitString(o.toString());
 	}
 
 	@Override
@@ -168,4 +168,8 @@ public class ToJson5Visitor extends ObjectVisitor {
 		return writer;
 	}
 
+	@Override
+	public void visitEnum(Enum<?> e) throws Exception {
+		visitString(e.toString());
+	}
 }

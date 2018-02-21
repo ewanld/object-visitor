@@ -28,7 +28,7 @@ public class ObjectVisitorTest {
 	public ObjectVisitorTest() throws IOException {
 		writer = new BufferedWriter(new FileWriter(last));
 
-		visitor = new ToJson5Visitor(writer);
+		visitor = new Json5Dumper(writer);
 
 		// visit options
 		visitor.setNullsIncluded(true);
@@ -37,7 +37,7 @@ public class ObjectVisitorTest {
 
 		// sorting options
 		visitor.setSetsSorted(false);
-		visitor.setFieldsSorted(false);
+		visitor.setKeysSorted(false);
 
 		// inclusion options
 		visitor.setFieldInclusionPredicate(f -> {
