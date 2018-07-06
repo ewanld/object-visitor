@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.github.ewanld</groupId>
-	<artifactId>object-visitor-java</artifactId>
+	<artifactId>object-visitor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>object-visitor-java</name>
-	<url>https://github.com/ewanld/object-visitor-java</url>
+	<name>object-visitor</name>
+	<url>https://github.com/ewanld/object-visitor</url>
 	<description>Traverse Java objects recursively.</description>
 
 	<licenses>
@@ -25,9 +25,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git@github.com:ewanld/object-visitor-java.git</connection>
-		<developerConnection>scm:git:git@github.com:ewanld/object-visitor-java.git</developerConnection>
-		<url>git@github.com:ewanld/object-visitor-java.git</url>
+		<connection>scm:git:git@github.com:ewanld/object-visitor.git</connection>
+		<developerConnection>scm:git:git@github.com:ewanld/object-visitor.git</developerConnection>
+		<url>git@github.com:ewanld/object-visitor.git</url>
 	</scm>
 
 	<properties>
