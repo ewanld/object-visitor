@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Test;
 
 import com.github.ewanld.objectvisitor.ObjectVisitor;
@@ -19,15 +20,14 @@ import com.github.ewanld.objectvisitor.ObjectVisitor;
  */
 public class ObjectVisitorTest {
 	private final ObjectVisitor visitor;
-	private static final File last = new File(
-			ObjectVisitorTest.class.getClassLoader().getResource("TestObjectVisitor-last.txt").getFile());
-	private static final File ref = new File(
+	private final File last;
+	private final File ref = new File(
 			ObjectVisitorTest.class.getClassLoader().getResource("TestObjectVisitor-ref.txt").getFile());
 	private Writer writer;
 
 	public ObjectVisitorTest() throws IOException {
+		last = File.createTempFile("TestObjectVisitor-", ".txt");
 		writer = new BufferedWriter(new FileWriter(last));
-
 		visitor = new Json5Dumper(writer);
 
 		// visit options
@@ -51,8 +51,10 @@ public class ObjectVisitorTest {
 		visitor.addBuiltinTypeAdapters();
 	}
 
+	@After
 	public void tearDown() throws IOException {
 		writer.close();
+		last.delete();
 	}
 
 	public void standardOptions() throws Exception {
