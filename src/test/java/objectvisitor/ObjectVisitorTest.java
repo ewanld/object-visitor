@@ -58,87 +58,111 @@ public class ObjectVisitorTest {
 	}
 
 	public void standardOptions() throws Exception {
-		// test null
-		write(null);
+		visitNull();
+		visitBoolean();
+		visitListOfBooleans();
+		visitInt();
+		visitListOfInts();
+		visitArrayOfInts();
+		visitString();
+		visit(new Class1());
+		visitRecursiveObject();
+		visitBuiltinTypes();
+		writer.flush();
+	}
 
-		// test booleans
-		write(true);
-		write(false);
+	private void visitBuiltinTypes() throws Exception {
+		// test builtin type adapters
+		visit(new GregorianCalendar(2010, 2, 10).getTime());
+		visit(new java.sql.Date(new GregorianCalendar(2010, 2, 10).getTimeInMillis()));
+		visit(new SimpleDateFormat("YYYY-MM-dd").toPattern());
+		visit(new GregorianCalendar(2010, 2, 10).getTime().toInstant());
+	}
 
-		// test lists of booleans
-		write(Arrays.asList());
-		write(Arrays.asList(true));
-		write(Arrays.asList(true, false));
-		write(Arrays.asList(true, null));
-
-		write(Arrays.asList(Boolean.TRUE));
-		write(Arrays.asList(Boolean.TRUE, Boolean.FALSE));
-
-		// test integers
-		write(1);
-		write(1l);
-
-		// test lists of integers
-		write(Arrays.asList(1, 2));
-		write(Arrays.asList(3l, 4l));
-		write(Arrays.asList(5l, null));
-		write(Arrays.asList(6l, 7l));
-
-		// test arrays of integers
-		final int[] arr = { 8, 9 };
-		write(arr);
-
-		final int[] arr2 = {};
-		write(arr2);
-
-		final int[] arr3 = null;
-		write(arr3);
-
-		final long[] arr4 = { 10l, 11l };
-		write(arr4);
-
-		final short[] arr5 = { 12, 13 };
-		write(arr5);
-
-		final byte[] arr6 = { 14, 15 };
-		write(arr6);
-
-		final int[][] arr7 = { { 16, 17 }, { 18 }, null };
-		write(arr7);
-
-		// test strings
-		write("");
-		write("s");
-		write(" ");
-
-		write("line1\nline2");
-
-		write("line1\nline2\nline3");
-
-		write("a\tb");
-		write("a	b");
-
-		write("a\\b");
-		write("a\"b");
-		write("a'b");
-		write("a\\\"b");
-
-		// test objects
-		write(new Class1());
-
+	private void visitRecursiveObject() throws Exception {
 		// test cycle detection
 		final RecursiveClass recursiveClass = new RecursiveClass(true, null);
 		final RecursiveClass recursiveClass_child = new RecursiveClass(false, recursiveClass);
 		recursiveClass.setOther(recursiveClass_child);
-		write(recursiveClass);
+		visit(recursiveClass);
+	}
 
-		// test builtin type adapters
-		write(new GregorianCalendar(2010, 2, 10).getTime());
-		write(new java.sql.Date(new GregorianCalendar(2010, 2, 10).getTimeInMillis()));
-		write(new SimpleDateFormat("YYYY-MM-dd").toPattern());
-		write(new GregorianCalendar(2010, 2, 10).getTime().toInstant());
+	private void visitString() throws Exception {
+		// test strings
+		visit("");
+		visit("s");
+		visit(" ");
 
-		writer.flush();
+		visit("line1\nline2");
+
+		visit("line1\nline2\nline3");
+
+		visit("a\tb");
+		visit("a	b");
+
+		visit("a\\b");
+		visit("a\"b");
+		visit("a'b");
+		visit("a\\\"b");
+	}
+
+	private void visitArrayOfInts() throws Exception {
+		// test arrays of integers
+		final int[] arr = { 8, 9 };
+		visit(arr);
+
+		final int[] arr2 = {};
+		visit(arr2);
+
+		final int[] arr3 = null;
+		visit(arr3);
+
+		final long[] arr4 = { 10l, 11l };
+		visit(arr4);
+
+		final short[] arr5 = { 12, 13 };
+		visit(arr5);
+
+		final byte[] arr6 = { 14, 15 };
+		visit(arr6);
+
+		final int[][] arr7 = { { 16, 17 }, { 18 }, null };
+		visit(arr7);
+	}
+
+	private void visitListOfInts() throws Exception {
+		// test lists of integers
+		visit(Arrays.asList(1, 2));
+		visit(Arrays.asList(3l, 4l));
+		visit(Arrays.asList(5l, null));
+		visit(Arrays.asList(6l, 7l));
+	}
+
+	private void visitInt() throws Exception {
+		// test integers
+		visit(1);
+		visit(1l);
+	}
+
+	private void visitListOfBooleans() throws Exception {
+		// test lists of booleans
+		visit(Arrays.asList());
+		visit(Arrays.asList(true));
+		visit(Arrays.asList(true, false));
+		visit(Arrays.asList(true, null));
+		visit(Arrays.asList(Boolean.TRUE));
+		visit(Arrays.asList(Boolean.TRUE, Boolean.FALSE));
+	}
+
+	private void visitBoolean() throws Exception {
+		// test booleans
+		visit(true);
+		visit(false);
+	}
+
+	private void visitNull() throws Exception {
+		// test null
+		visit(null);
 	}
 
 	@Test
@@ -147,7 +171,7 @@ public class ObjectVisitorTest {
 		assert FileUtils.contentEquals(last, ref);
 	}
 
-	public void write(Object o) throws Exception {
+	public void visit(Object o) throws Exception {
 		visitor.visitRecursively(o);
 		writer.write("\n\n");
 	}
