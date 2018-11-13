@@ -31,7 +31,7 @@ import com.github.ewanld.objectvisitor.internal.ObjectVisitorUtil;
  * <p>
  * The following objects may be traversed:
  * <ul>
- * <li>Primitive types
+ * <li>Primitive types ({@code boolean}, {@code integer}, {@code char}, etc).
  * <li>{@code String} instances
  * <li>Arrays (recursively)
  * <li>{@code Iterable} instances (recursively)
@@ -90,6 +90,10 @@ public abstract class ObjectVisitor {
 		MAP_KEY, OBJECT_FIELD, OBJECT_GETTER
 	}
 
+	/**
+	 * Callback when a boolean value is visited.
+	 * @param o Guaranteed to be non-null.
+	 */
 	public abstract void visitBoolean(Boolean o) throws Exception;
 
 	public abstract void visitLong(Long o) throws Exception;
@@ -124,12 +128,6 @@ public abstract class ObjectVisitor {
 		addTypeAdapter(BigDecimal.class, BigDecimal::doubleValue);
 	}
 
-	public Map<Object, Object> mapOf(Object key, Object value) {
-		final HashMap<Object, Object> res = new HashMap<>();
-		res.put(key, value);
-		return res;
-	}
-
 	private Function<Object, Object> findTypeAdapter(Object o) {
 		@SuppressWarnings("unchecked") final Class<Object> _class = (Class<Object>) o.getClass();
 
@@ -154,16 +152,30 @@ public abstract class ObjectVisitor {
 
 	}
 
+	/**
+	 * Convenience method. Shortcut for {@code onIterableEvent(event, null)}.
+	 */
 	protected final void onIterableEvent(VisitEvent event) throws Exception {
 		onIterableEvent(event, null);
 	}
 
+	/**
+	 * Callback when an event occured on a <i>KeyValueObject</i>.
+	 * <p>
+	 * A <i>KeyValueObject</i> is either a {@code Map}, or a Java object with fields or getters.
+	 * @param event The type of event that occured.
+	 * @param type The type of <i>KeyValueObject</i> that has been visited.
+	 * @param object The object that has been visited.
+	 */
 	protected void onKeyValueObjectEvent(VisitEvent event, KeyValueObjectType type, Object object) throws Exception {
 
 	}
 
+	/**
+	 * Convenience method. Shortcut for {@code onKeyValueObjectEvent(event, null)}
+	 */
 	protected final void onKeyValueObjectEvent(VisitEvent event, KeyValueObjectType type) throws Exception {
-		onKeyValueObjectEvent(event, null);
+		onKeyValueObjectEvent(event, type, null);
 	}
 
 	private <T> Set<T> maybeSortSet(Set<T> set) {
@@ -281,7 +293,7 @@ public abstract class ObjectVisitor {
 		return true;
 	}
 
-	public final void visitObject(Object o) throws Exception {
+	private final void visitObject(Object o) throws Exception {
 		final Function<Object, Object> typeAdapter = findTypeAdapter(o);
 		if (typeAdapter != null) {
 			visitRecursively(typeAdapter.apply(o));
@@ -398,7 +410,7 @@ public abstract class ObjectVisitor {
 		return res;
 	}
 
-	public final void visitMap(Map<?, ?> map) throws Exception {
+	private final void visitMap(Map<?, ?> map) throws Exception {
 		nestingLevel++;
 		onKeyValueObjectEvent(VisitEvent.ENTER, KeyValueObjectType.MAP, map);
 		boolean first = true;
@@ -436,7 +448,7 @@ public abstract class ObjectVisitor {
 		onKeyValueObjectEvent(VisitEvent.LEAVE, KeyValueObjectType.MAP, map);
 	}
 
-	public final void visitIterable(Iterable<?> iterable) throws Exception {
+	private final void visitIterable(Iterable<?> iterable) throws Exception {
 		nestingLevel++;
 		onIterableEvent(VisitEvent.ENTER, iterable);
 		boolean first = true;
@@ -463,6 +475,9 @@ public abstract class ObjectVisitor {
 
 	/**
 	 * Get the current nesting level, starting from 0.
+	 * <p>
+	 * The nesting level is incremented everytime the visitor enters an {@code Object}, {@code Map}, {@code array}, or
+	 * {@code Iterable} instance.
 	 */
 	protected int getNestingLevel() {
 		return nestingLevel;
