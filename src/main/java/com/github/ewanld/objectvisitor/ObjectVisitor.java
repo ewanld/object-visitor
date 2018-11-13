@@ -56,9 +56,6 @@ import com.github.ewanld.objectvisitor.internal.ObjectVisitorUtil;
  * between arrays and Iterables.
  */
 public abstract class ObjectVisitor {
-	private final Map<Class<Object>, Function<Object, Object>> typeAdapters = new HashMap<>();
-	private int nestingLevel = 0;
-
 	// filter options
 	private boolean fieldsIncluded = true;
 	private boolean transientFieldsIncluded;
@@ -74,12 +71,16 @@ public abstract class ObjectVisitor {
 
 	// cycle-related options
 	private boolean detectCycles = true;
-	private final List<Object> parentObjects = new ArrayList<>();
 	private Function<Object, Object> alreadyVisitedReplacementFunction = null;
 
 	// transformations options
+	private final Map<Class<Object>, Function<Object, Object>> typeAdapters = new HashMap<>();
 	public Function<Field, String> fieldNameFunction = Field::getName;
 	public Function<Method, String> getterNameFunction = Method::getName;
+
+	// mutable state
+	private final List<Object> parentObjects = new ArrayList<>();
+	private int nestingLevel = 0;
 
 	public enum KeyValueObjectType {
 		MAP, OBJECT
@@ -532,7 +533,7 @@ public abstract class ObjectVisitor {
 
 	/**
 	 * If true, the object graph is checked for cycles. Objects that have been already visited once are skipped along
-	 * with the parent key (unless {@link {setAlreadyVisitedReplacementFunction} has been called).
+	 * with the parent key (unless {@link #setAlreadyVisitedReplacementFunction(Function)} has been called).
 	 * <p>
 	 * Default value: {@code true}
 	 */
